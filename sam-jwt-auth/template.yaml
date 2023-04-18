@@ -11,28 +11,42 @@ Globals:
     MemorySize: 128
 
 Resources:
-  HelloWorldFunction:
+  WhiteListAllIPsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow all traffic
+      SecurityGroupIngress:
+        - IpProtocol: tcp, udp, icmp, icmpv6
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp, udp, icmp, icmpv6
+          CidrIp: 0.0.0.0/0
+
+  ConnectToMongoDBFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/
-      Handler: app.lambdaHandler
+      Handler: app.connectToMongoDB
       Runtime: nodejs16.x
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        UploadImageEvent:
           Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Path: /connect-db
+            Method: GET
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref WhiteListAllIPsSecurityGroup
 
 Outputs:
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  ConnectToMongoDBApi:
+    Description: "API Gateway endpoint URL for Prod stage for ConnectToMongoDB function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/connect-db/"
+  ConnectToMongoDBFunction:
+    Description: "ConnectToMongoDB Lambda Function ARN"
+    Value: !GetAtt ConnectToMongoDBFunction.Arn
+  ConnectToMongoDBFunctionIamRole:
+    Description: "Implicit IAM Role created for ConnectToMongoDB function"
+    Value: !GetAtt ConnectToMongoDBFunctionRole.Arn

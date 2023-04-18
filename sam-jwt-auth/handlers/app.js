@@ -1,13 +1,16 @@
 let response;
+const connectDB = require('./db/connect.js');
+require('dotenv').config();
 
-exports.lambdaHandler = async (event, context) => {
+exports.connectToMongoDB = async (event, context) => {
+    response = {
+        'statusCode': 200,
+        'body': JSON.stringify({
+            message: 'Successfully connected to DB',
+        })
+    }
     try {
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-            })
-        }
+        await connectDB(process.env.MONGO_URI);
     } catch (err) {
         console.log(err);
         return err;
