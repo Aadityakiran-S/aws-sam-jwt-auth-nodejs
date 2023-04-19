@@ -11,42 +11,40 @@ Globals:
     MemorySize: 128
 
 Resources:
-  WhiteListAllIPsSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  ExpressApi:
+    Type: AWS::Serverless::Api
     Properties:
-      GroupDescription: Allow all traffic
-      SecurityGroupIngress:
-        - IpProtocol: tcp, udp, icmp, icmpv6
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: tcp, udp, icmp, icmpv6
-          CidrIp: 0.0.0.0/0
+      StageName: prod
+      BinaryMediaTypes: ["*/*"]
 
-  ConnectToMongoDBFunction:
+  ExpressFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/
-      Handler: app.connectToMongoDB
+      Handler: lambda.handler
       Runtime: nodejs16.x
-      Architectures:
-        - x86_64
+      MemorySize: 512
       Events:
-        UploadImageEvent:
+        ExpressFunctionProxy:
           Type: Api
           Properties:
-            Path: /connect-db
-            Method: GET
-      VpcConfig:
-        SecurityGroupIds:
-          - !Ref WhiteListAllIPsSecurityGroup
+            RestApiId: !Ref ExpressApi
+            Path: "/{proxy+}"
+            Method: ANY
+        ExpressFunctionRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ExpressApi
+            Path: "/"
+            Method: ANY
 
 Outputs:
-  ConnectToMongoDBApi:
-    Description: "API Gateway endpoint URL for Prod stage for ConnectToMongoDB function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/connect-db/"
-  ConnectToMongoDBFunction:
-    Description: "ConnectToMongoDB Lambda Function ARN"
-    Value: !GetAtt ConnectToMongoDBFunction.Arn
-  ConnectToMongoDBFunctionIamRole:
-    Description: "Implicit IAM Role created for ConnectToMongoDB function"
-    Value: !GetAtt ConnectToMongoDBFunctionRole.Arn
+  ExpressFunctiondApi:
+    Description: "API Gateway endpoint URL for Prod stage for Express function"
+    Value: !Sub "https://${ExpressApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+  ExpressFunction:
+    Description: "Express Lambda Function ARN"
+    Value: !GetAtt ExpressFunction.Arn
+  ExpressFunctionIamRole:
+    Description: "Implicit IAM Role created for Express function"
+    Value: !GetAtt ExpressFunctionRole.Arn
