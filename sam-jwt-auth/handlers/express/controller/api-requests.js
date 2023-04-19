@@ -69,6 +69,7 @@ const loginUser = async (req, res) => {
 
 //#region Debug functions
 const debug_getAllUsers = async (req, res) => {
+    console.log("Hello from GetAllUsers");
     try {
         let users = await userSchema.find({});
         return res.status(200).json({ success: true, data: { usrs: users }, count: users.length });
