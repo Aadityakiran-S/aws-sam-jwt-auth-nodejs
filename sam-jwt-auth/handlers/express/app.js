@@ -13,7 +13,7 @@ app.use('/api/v1/users', routes);
 const port = process.env.PORT || 3000;
 const start = async (mongoURI) => {
     try {
-        await connectDB(mongoURI);
+        // await connectDB(mongoURI); //No need to connect here. We're already connecting somewhere else
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}....`);
         })
