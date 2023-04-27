@@ -7,17 +7,18 @@ require('dotenv').config();
 let serverlessExpressInstance
 
 async function asyncTask() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const timeout = setTimeout(async () => {
             await connectDB(process.env.MONGO_URI);
+            console.log("Hello from Async Task");
             resolve('connected to database');
-        }, 1000) //How to reject and return in case of errors?
+        }, 10000)
     })
 }
 
 async function setup(event, context) {
     const asyncValue = await asyncTask() //No try catch here? 
-    console.log(asyncValue)
+    console.log(asyncValue);
     serverlessExpressInstance = serverlessExpress({ app })
     return serverlessExpressInstance(event, context)
 }
@@ -29,3 +30,4 @@ async function handler(event, context) {
 }
 
 exports.handler = handler
+// exports.handler = serverlessExpress({ app })

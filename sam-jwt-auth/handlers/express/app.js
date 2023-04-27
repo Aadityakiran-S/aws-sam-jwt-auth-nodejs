@@ -14,9 +14,9 @@ const port = process.env.PORT || 3000;
 const start = async (mongoURI) => {
     try {
         // await connectDB(mongoURI); //No need to connect here. We're already connecting somewhere else
-        app.listen(port, () => {
-            console.log(`Server is listening on port ${port}....`);
-        })
+        // app.listen(port, () => {
+        //     console.log(`Server is listening on port ${port}....`);
+        // })
     }
     catch (err) {
         console.log(err);

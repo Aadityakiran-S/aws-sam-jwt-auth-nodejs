@@ -2,7 +2,7 @@ const { generateAccessToken } = require('../helpers/jwt-helper.js');
 const userSchema = require('../models/models.js');
 const { isValidPassword, isValidEmail, encryptPassWord } = require('../helpers/general-helper.js');
 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
